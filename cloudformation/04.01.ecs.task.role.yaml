@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'ECS Role, LogGroup'
+Parameters:
+  ProjectName:
+    Type: String
+    Default: ecs-practice
+
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+Resources:
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/ecs/${ProjectName}'
+      RetentionInDays: 365
+
+  TaskExecRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+              - '-'
+              - - !Ref ProjectName
+                - ECS
+                - ExecRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref ProjectName
+          - ECS
+          - TaskRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: S3Logs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                Effect: Allow
+                Resource: 'arn:aws:s3:::ecs-practice-logs*'
+
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+Outputs:
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+# - - - - - - - - - - - - - - - - -
+  LogGroup:
+    Value: !Ref LogGroup
+    Export:
+      Name: !Join
+        - '-'
+        - - ECS
+          - LogGroup
+          - !Ref ProjectName
+
+# - - - - - - - - - - - - - - - - -
+  TaskExecRole:
+    Value: !Ref TaskExecRole
+    Export:
+      Name: !Join
+            - '-'
+            - - ECS
+              - ExecRole
+              - !Ref ProjectName
+
+# - - - - - - - - - - - - - - - - -
+  TaskExecRoleArn:
+    Value: !GetAtt TaskExecRole.Arn
+    Export:
+      Name: !Join
+            - '-'
+            - - ECS
+              - ExecRoleArn
+              - !Ref ProjectName
+
+  # - - - - - - - - - - - - - - - - -
+  TaskRole:
+    Value: !Ref TaskRole
+    Export:
+      Name: !Join
+        - '-'
+        - - ECS
+          - TaskRole
+          - !Ref ProjectName
+
+  # - - - - - - - - - - - - - - - - -
+  TaskRoleArn:
+    Value: !GetAtt TaskRole.Arn
+    Export:
+      Name: !Join
+        - '-'
+        - - ECS
+          - TaskRoleArn
+          - !Ref ProjectName

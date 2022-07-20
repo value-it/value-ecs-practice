@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 Bucket for ECS'
+Parameters:
+  ProjectName:
+    Type: String
+    Default: ecs-practice
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prd
+
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+Resources:
+# + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+# - - - - - - - - - - - - - - - - -
+  S3BucketResources:
+# - - - - - - - - - - - - - - - - -
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Join
+            - '-'
+            - - !Ref ProjectName
+              - logs
+              - !Ref Stage
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Suspended
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref ProjectName
+              - logs
+              - !Ref Stage
+        - Key: ProjectName
+          Value: !Ref ProjectName
+        - Key: Stage
+          Value: !Ref Stage
+
+  # - - - - - - - - - - - - - - - - -
+  EcrRepositoryForFluentbit:
+    # - - - - - - - - - - - - - - - - -
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Join
+        - '/'
+        - - !Ref ProjectName
+          - 'fluentbit-dev-my-firelens'
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep all tagged images and untagged 5 images, expire all others",
+                "action": {
+                  "type": "expire"
+                },
+                "selection": {
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 5,
+                  "tagStatus": "untagged"
+                }
+              }
+            ]
+          }
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/ecs/${ProjectName}/fluentbit'
+      RetentionInDays: 365
