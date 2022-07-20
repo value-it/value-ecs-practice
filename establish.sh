@@ -8,40 +8,40 @@ fi
 CURRENT_DIR=$(cd $(dirname $0); pwd)
 cd $CURRENT_DIR
 
-## 基本ネットワーク構築
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-network \
-#--template-file ./cloudformation/01-create-network.yaml
-#
-#
-## 基本SecurityGroup作成
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-securitygroup \
-#--template-file ./cloudformation/02-securitygroup.yaml
-#
-#
-## ALB作成
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-alb \
-#--template-file ./cloudformation/03-alb.yaml
-#
-#
-## ECS定義作成
-## ECS用Role
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-ecs-role \
-#--template-file ./cloudformation/04.01.ecs.task.role.yaml \
-#--capabilities CAPABILITY_NAMED_IAM
-#
-## ECSタスク定義
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-ecs-task \
-#--template-file ./cloudformation/04.02.ecs.task.def.yaml
-#
-## ECSアプリログ用fluentbitイメージECRと送信先S3バケット作成
-#aws cloudformation deploy \
-#--stack-name ecs-practice-template-ecs-logs-s3 \
-#--template-file ./cloudformation/04.03.ecs.fluentbit.yaml
+# 基本ネットワーク構築
+aws cloudformation deploy \
+--stack-name ecs-practice-template-network \
+--template-file ./cloudformation/01-create-network.yaml
+
+
+# 基本SecurityGroup作成
+aws cloudformation deploy \
+--stack-name ecs-practice-template-securitygroup \
+--template-file ./cloudformation/02-securitygroup.yaml
+
+
+# ALB作成
+aws cloudformation deploy \
+--stack-name ecs-practice-template-alb \
+--template-file ./cloudformation/03-alb.yaml
+
+
+# ECS定義作成
+# ECS用Role
+aws cloudformation deploy \
+--stack-name ecs-practice-template-ecs-role \
+--template-file ./cloudformation/04.01.ecs.task.role.yaml \
+--capabilities CAPABILITY_NAMED_IAM
+
+# ECSタスク定義
+aws cloudformation deploy \
+--stack-name ecs-practice-template-ecs-task \
+--template-file ./cloudformation/04.02.ecs.task.def.yaml
+
+# ECSアプリログ用fluentbitイメージECRと送信先S3バケット作成
+aws cloudformation deploy \
+--stack-name ecs-practice-template-ecs-logs-s3 \
+--template-file ./cloudformation/04.03.ecs.fluentbit.yaml
 
 # flulentbitイメージを作成してECRにPUSHする
 ACCOUNT_ID=`aws sts get-caller-identity --query 'Account' --output text`
