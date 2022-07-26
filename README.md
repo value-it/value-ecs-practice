@@ -5,10 +5,6 @@ fluentbitはS3にのみログ出力する設定
 
 ## 事前準備
 
-### AWS Codestar Connectionsの接続作成
-GitHubからソースコードを取得するための接続を以下より作成しARNを控えておく  
-https://ap-northeast-1.console.aws.amazon.com/codesuite/settings/connections/create?origin=settings&region=ap-northeast-1
-
 ### 作業用端末にAWS CLI v2をインストール
 https://aws.amazon.com/jp/cli/
 
@@ -24,12 +20,6 @@ https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-configure-profiles.ht
 事前に作成したAWSプロファイルを指定（プロファイル名は適宜修正）
 ```shell
 export AWS_PROFILE=hogehoge
-```
-
-前手順で作成したAWS Codestar ConnectionsのARNを指定
-```shell
-# ex) CODESTART_CONNECTION_ARN=arn:aws:codestar-connections:ap-northeast-1:xxxxxxxx:connection/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxx
-export CODESTAR_CONNECTION_ARN=
 ```
 
 ### 1. 基本ネットワーク構築
