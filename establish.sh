@@ -1,10 +1,5 @@
 #!/bin/sh
 
-if [ -z $CODESTAR_CONNECTION_ARN ]; then
-  echo 'Please set the "CODESTAR_CONNECTION_ARN" environment variable.' >&2
-  exit 1
-fi
-
 CURRENT_DIR=$(cd $(dirname $0); pwd)
 cd $CURRENT_DIR
 
