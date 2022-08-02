@@ -61,8 +61,12 @@ aws cloudformation deploy \
 --stack-name ecs-practice-template-ecs-logs-s3 \
 --template-file ./cloudformation/04.03.ecs.fluentbit.yaml
 
-# flulentbitイメージ作成
-./fluentbit/make-fluentbit-image.sh
+# flulentbitイメージを作成してECRにPUSHする
+ACCOUNT_ID=`aws sts get-caller-identity --query 'Account' --output text`
+docker build -f ./Dockerfile -t fluentbit-dev-my-firelens .
+docker tag fluentbit-dev-my-firelens:latest $ACCOUNT_ID.dkr.ecr.ap-northeast-1.amazonaws.com/ecs-practice/fluentbit-dev-my-firelens:latest
+aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.ap-northeast-1.amazonaws.com
+docker push $ACCOUNT_ID.dkr.ecr.ap-northeast-1.amazonaws.com/ecs-practice/fluentbit-dev-my-firelens:latest
 
 # ECSサービス
 aws cloudformation deploy \
