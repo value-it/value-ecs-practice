@@ -65,7 +65,8 @@ Resources:
             - Name: AWS_REGION
               Value: ap-northeast-1
             - Name: LOG_BUCKET_NAME
-              Value: !Join [ '-', [ !Ref ProjectName, logs, !Ref Stage ] ]
+              Value:
+                Fn::ImportValue: !Sub '${ProjectName}-${Stage}-logs-bucket-name'
 
       ExecutionRoleArn:
         Fn::ImportValue:

@@ -21,11 +21,11 @@ Mappings:
   # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
   scaling:
     dev:
-      MinCapacity: 2
+      MinCapacity: 0
       MaxCapacity: 5
 
     prod:
-      MinCapacity: 2
+      MinCapacity: 0
       MaxCapacity: 10
 
 # + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
@@ -52,7 +52,7 @@ Resources:
       DeploymentConfiguration:
         MaximumPercent: 200
         MinimumHealthyPercent: 100
-      DesiredCount: 2
+      DesiredCount: 0
       HealthCheckGracePeriodSeconds: 300
       LaunchType: FARGATE
       LoadBalancers:

@@ -20,21 +20,13 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties:
-      BucketName: !Join
-            - '-'
-            - - !Ref ProjectName
-              - logs
-              - !Ref Stage
+      BucketName: !Sub '${ProjectName}-logs-${Stage}-${AWS::AccountId}'
       AccessControl: Private
       VersioningConfiguration:
         Status: Suspended
       Tags:
         - Key: Name
-          Value: !Join
-            - '-'
-            - - !Ref ProjectName
-              - logs
-              - !Ref Stage
+          Value: !Sub '${ProjectName}-logs-${Stage}-${AWS::AccountId}'
         - Key: ProjectName
           Value: !Ref ProjectName
         - Key: Stage
@@ -73,3 +65,10 @@ Resources:
     Properties:
       LogGroupName: !Sub '/ecs/${ProjectName}/fluentbit'
       RetentionInDays: 365
+
+Outputs:
+  LogsBucketName:
+    Description: ECS logs bucket name
+    Value: !Ref S3BucketResources
+    Export:
+      Name: !Sub '${ProjectName}-${Stage}-logs-bucket-name'

@@ -1,18 +1,23 @@
 #!/bin/sh
-
 # スタック全削除
+set -eu
+trap 'echo "ERROR: failed at line $LINENO" >&2' ERR
 
 CURRENT_DIR=$(cd $(dirname $0); pwd)
 cd $CURRENT_DIR
 
+# AWSアカウントID取得
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+
 # S3バケット削除
-echo "delete s3 bucket"
+BUCKET_NAME="ecs-practice-logs-dev-${AWS_ACCOUNT_ID}"
+echo "delete s3 bucket: ${BUCKET_NAME}"
 # バージョニングオブジェクト全削除
-RES=`aws s3api delete-objects --bucket ecs-practice-logs-dev \
---delete "$(aws s3api list-object-versions --bucket ecs-practice-logs-dev \
+RES=`aws s3api delete-objects --bucket ${BUCKET_NAME} \
+--delete "$(aws s3api list-object-versions --bucket ${BUCKET_NAME} \
 --query='{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"`
 # バケット削除
-aws s3 rb s3://ecs-practice-logs-dev --force
+aws s3 rb s3://${BUCKET_NAME} --force
 
 # ECRリポジトリ削除
 echo "delete ecr repository"
