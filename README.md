@@ -62,6 +62,7 @@ aws cloudformation deploy \
 --template-file ./cloudformation/04.03.ecs.task.def.yaml
 
 # flulentbitイメージを作成してECRにPUSHする
+ACCOUNT_ID=`aws sts get-caller-identity --query 'Account' --output text`
 # 1) builder を用意
 if ! docker buildx inspect ecs-plactice-builder >/dev/null 2>&1; then
   docker buildx create --name ecs-plactice-builder --use
@@ -97,3 +98,21 @@ aws ecs update-service \
 
 http://{{上記で確認したDNS名}}/  
 でアクセス
+
+
+---
+
+## Tips
+
+### ECSタスクのコンテナにSSMでログインする
+- 予めAWS CLIにSessionManagerプラグインのインストールが必要
+
+```shell
+aws ecs execute-command \
+--region ap-northeast-1 \
+--cluster ecs-practice-app \
+--task タスクID \
+--container ecs-practice-httpd \
+--interactive \
+--command "/bin/sh"
+```

@@ -47,6 +47,7 @@ Resources:
     Type: AWS::ECS::Service
     Properties:
       Cluster: !Ref ECSCluster
+      EnableExecuteCommand: true
       DeploymentController:
         Type: ECS
       DeploymentConfiguration:
